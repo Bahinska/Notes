@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Notes.Application.Commom.Mappings
+namespace Notes.Application.Common.Mappings
 {
     public interface IMapWith<T>
     {
