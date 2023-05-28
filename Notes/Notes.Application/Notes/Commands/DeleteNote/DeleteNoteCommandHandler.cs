@@ -2,10 +2,6 @@
 using Notes.Application.Interfaces;
 using Notes.Application.Common.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Notes.Domain;
 
 namespace Notes.Application.Notes.Commands.DeleteNote
