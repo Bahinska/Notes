@@ -19,7 +19,7 @@ namespace Notes.WebApi
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<INotesDbContext>(provider =>
-provider.GetService<NotesDbContext>());
+                provider.GetService<NotesDbContext>());
 
             builder.Services.AddAutoMapper(config =>
             {
