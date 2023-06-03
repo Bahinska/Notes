@@ -1,7 +1,9 @@
 using IdentityServer4;
 using IdentityServer4.Models;
+using System.IO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Notes.Identity.Data;
 using Notes.Identity.Models;
 using System;
@@ -42,6 +44,7 @@ namespace Notes.Identity
                 config.LoginPath = "/Auth/Login";
                 config.LogoutPath = "/Auth/Logout";
             });
+            builder.Services.AddControllersWithViews();
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -58,9 +61,18 @@ namespace Notes.Identity
                     logger.LogError(ex, "An error occurred while app initialization");
                 }
             }
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(builder.Environment.ContentRootPath, "Styles")),
+                RequestPath="/styles"
+            });
             app.UseRouting();
             app.UseIdentityServer();
-            app.MapGet("/", () => "Hello World!");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
 
             app.Run();
         }

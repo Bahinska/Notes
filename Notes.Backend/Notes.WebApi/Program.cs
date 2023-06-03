@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application;
 using Notes.Application.Common.Mappings;
@@ -11,7 +12,7 @@ namespace Notes.WebApi
     public class Program
     {
         public static IConfiguration Configuration { get; set; }
-        public Program(IConfiguration configuration)=>Configuration = configuration;
+        public Program(IConfiguration configuration) => Configuration = configuration;
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -40,8 +41,21 @@ namespace Notes.WebApi
                 });
             });
 
+            builder.Services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:7011";
+                    options.Audience = "NotesWebAPI";
+                    options.RequireHttpsMetadata = false;
+                });
+
             var app = builder.Build();
-            using(var scope = app.Services.CreateScope())
+            using (var scope = app.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
                 try
@@ -55,7 +69,11 @@ namespace Notes.WebApi
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-            app.UseEndpoints(endpoints=>
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
