@@ -38,15 +38,15 @@ namespace Notes.Identity
                     RequirePkce = true,
                     RedirectUris=
                     {
-                        "http://.../singin-oidc"
+                        "http://localhost:3000/singin-oidc"
                     },
                     AllowedCorsOrigins =
                     {
-                        "http://..."
+                        "http://localhost:3000"
                     },
                     PostLogoutRedirectUris=
                     {
-                        "http:/.../signout-oidc"
+                        "http://localhost:3000/signout-oidc"
                     },
                     AllowedScopes=
                     {
