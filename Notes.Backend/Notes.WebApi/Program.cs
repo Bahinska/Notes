@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Notes.Application;
 using Notes.Application.Common.Mappings;
 using Notes.Application.Interfaces;
 using Notes.Persistence;
 using Notes.WebApi.MiddleWare;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
 namespace Notes.WebApi
@@ -53,14 +56,16 @@ namespace Notes.WebApi
                     options.Audience = "NotesWebAPI";
                     options.RequireHttpsMetadata = false;
                 });
-            builder.Services.AddSwaggerGen(config=>
-            {
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                config.IncludeXmlComments(xmlPath);
-            });
+            builder.Services.AddVersionedApiExplorer(options =>
+                 options.GroupNameFormat = "'v'VVV");
+            builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>,
+                ConfigureSwaggerOptions>();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddApiVersioning();
 
             var app = builder.Build();
+            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             using (var scope = app.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
@@ -72,10 +77,15 @@ namespace Notes.WebApi
                 catch (Exception ex) { }
             }
             app.UseSwagger();
-            app.UseSwaggerUI(config=>
+            app.UseSwaggerUI(config =>
             {
-                config.RoutePrefix=string.Empty;
-                config.SwaggerEndpoint("swagger/v1/swagger.json", "Notes API");
+                foreach (var desc in provider.ApiVersionDescriptions)
+                {
+                    config.SwaggerEndpoint(
+                        $"/swagger/{desc.GroupName}/swagger.json",
+                        desc.GroupName.ToUpperInvariant());
+                    config.RoutePrefix = string.Empty;
+                }
             });
             app.UseCustomExceptionHandler();
             app.UseRouting();
@@ -84,7 +94,7 @@ namespace Notes.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseApiVersioning();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
