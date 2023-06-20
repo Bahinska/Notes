@@ -1,7 +1,7 @@
-﻿using IdentityModel;
+﻿using System.Collections.Generic;
 using IdentityServer4;
 using IdentityServer4.Models;
-
+using IdentityModel;
 
 namespace Notes.Identity
 {
@@ -10,45 +10,49 @@ namespace Notes.Identity
         public static IEnumerable<ApiScope> ApiScopes =>
             new List<ApiScope>
             {
-                new ApiScope("NotesWebAPI","Web API")
+                new ApiScope("NotesWebAPI", "Web API")
             };
+
         public static IEnumerable<IdentityResource> IdentityResources =>
             new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile()
             };
+
         public static IEnumerable<ApiResource> ApiResources =>
             new List<ApiResource>
             {
-                new ApiResource("NotesWebApi", "Web API", new[]{JwtClaimTypes.Name})
+                new ApiResource("NotesWebAPI", "Web API", new []
+                    { JwtClaimTypes.Name})
                 {
-                    Scopes ={"NotesWebAPI"}
+                    Scopes = {"NotesWebAPI"}
                 }
             };
+
         public static IEnumerable<Client> Clients =>
             new List<Client>
             {
                 new Client
                 {
-                    ClientId = "notes-web-api",
+                    ClientId = "notes-web-app",
                     ClientName = "Notes Web",
                     AllowedGrantTypes = GrantTypes.Code,
                     RequireClientSecret = false,
                     RequirePkce = true,
-                    RedirectUris=
+                    RedirectUris =
                     {
-                        "http://localhost:3000/singin-oidc"
+                        "http://localhost:3000/signin-oidc"
                     },
                     AllowedCorsOrigins =
                     {
                         "http://localhost:3000"
                     },
-                    PostLogoutRedirectUris=
+                    PostLogoutRedirectUris =
                     {
                         "http://localhost:3000/signout-oidc"
                     },
-                    AllowedScopes=
+                    AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,

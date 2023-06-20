@@ -5,7 +5,7 @@ import { FormControl } from 'react-bootstrap';
 const apiClient = new Client('https://localhost:7163');
 
 async function createNote(note: CreateNoteDto) {
-    await apiClient.create('1.0', note)
+    await apiClient.create('1.0', note);
     console.log('Note is created.');
 }
 
@@ -26,12 +26,14 @@ const NoteList: FC<{}> = (): ReactElement => {
         if (event.key === 'Enter') {
             const note: CreateNoteDto = {
                 title: event.currentTarget.value,
+                details: ''
             };
             createNote(note);
             event.currentTarget.value = '';
             setTimeout(getNotes, 500);
         }
     };
+
     return (
         <div>
             Notes
@@ -40,7 +42,7 @@ const NoteList: FC<{}> = (): ReactElement => {
             </div>
             <section>
                 {notes?.map((note) => (
-                    <div>{note.title}</div> 
+                    <div>{note.title}</div>
                 ))}
             </section>
         </div>

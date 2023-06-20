@@ -56,7 +56,10 @@ namespace Notes.Identity.Controllers
             {
                 return View(viewModel);
             }
-            var user = new AppUser { UserName = viewModel.UserName };
+            var user = new AppUser { UserName = viewModel.UserName,
+                FirstName = viewModel.UserName,
+                LastName = viewModel.UserName,
+            };
             var result = await _userManager.CreateAsync(user, viewModel.Password);
             if (result.Succeeded)
             {
