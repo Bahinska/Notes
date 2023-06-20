@@ -8,7 +8,7 @@ Contains:
     Entity Framework Core 6,
     IdentityServer4,
     MS SQL Server,
-    React
+    React,
     TypeScript,
     HTML5/CSS3,
     Swagger,
